@@ -6,13 +6,11 @@ import { useI18n } from '../../i18n';
 import { useWorkouts } from '../../hooks/useData';
 import { Card, ProgressBar } from '../../components/ui';
 import { weeklyWorkoutCounts } from '../../analytics/workouts';
-import { diffDays, today, weekStart } from '../../utils/date';
+import { isWorkoutReminderDue } from '../../training/workoutReminders';
+import { today, weekStart } from '../../utils/date';
 import { lsGet, lsSet } from '../../utils/storage';
 
 const STORAGE_KEY = 'wlh:smartWorkoutReminders';
-const MORNING_START_HOUR = 7;
-const MORNING_END_HOUR = 11;
-
 interface ReminderPreferences {
   phoneEnabled: boolean;
   lastNotifiedDate?: string;
@@ -42,13 +40,8 @@ export function SmartWorkoutReminders() {
     if (Notification.permission !== 'granted') return;
 
     const now = new Date();
-    if (now.getHours() < MORNING_START_HOUR || now.getHours() >= MORNING_END_HOUR) return;
     const day = today();
-    const last = preferences.lastNotifiedDate;
-    const daysSinceLast = last ? diffDays(last, day) : Number.POSITIVE_INFINITY;
-    // Higher remaining workload gets a daily reminder; 1–2 remaining sessions get one every other day.
-    const intervalDays = progress.remaining >= 3 ? 1 : 2;
-    if (daysSinceLast < intervalDays) return;
+    if (!isWorkoutReminderDue(preferences.lastNotifiedDate, day, progress.remaining, now.getHours())) return;
 
     let cancelled = false;
     void navigator.serviceWorker.getRegistration().then(async (registration) => {
