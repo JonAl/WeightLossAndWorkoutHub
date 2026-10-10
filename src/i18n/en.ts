@@ -358,6 +358,23 @@ export const en = {
   'trs.sound': 'Sound when rest is over', 'trs.vibrate': 'Vibrate when rest is over', 'trs.defaultRest': 'Default rest (s)', 'trs.bar': 'Bar weight', 'trs.plates': 'Available plates', 'trs.platesHint': 'Comma-separated',
   'trs.bgNote': 'Alerts work while the app is open. Web apps cannot reliably alert in the background when the screen is off.',
   'table.exercises': 'Custom exercises', 'table.programs': 'Training plans', 'table.mealPlan': 'Meal plan'
+
+  // Smart workout reminders
+  'reminder.title': 'Your workout goal',
+  'reminder.remainingOne': 'One more session to reach this week’s target.',
+  'reminder.remainingMany': '{n} sessions left to reach this week’s target.',
+  'reminder.progress': '{done} of {target} workouts completed this week.',
+  'reminder.start': 'Open workouts',
+  'reminder.phoneTitle': 'Morning phone notifications',
+  'reminder.phoneEnable': 'Enable notifications',
+  'reminder.phoneDisable': 'Turn off',
+  'reminder.phoneHint': 'With 3+ sessions remaining, reminders may appear each morning. With 1–2 remaining, they appear every other morning. No reminder is shown after you reach your target.',
+  'reminder.phoneBackgroundNote': 'On this version, a phone notification can appear only while the app is open during 07:00–11:00. Notifications while the app is fully closed need a push service.',
+  'reminder.phoneUnsupported': 'This browser does not support app notifications. The in-app reminder still works.',
+  'reminder.phoneDenied': 'Notifications are not allowed. You can enable them in your browser or device settings.',
+  'reminder.notificationTitle': 'Time for your workout 💪',
+  'reminder.notificationOne': 'One workout left to reach your weekly goal.',
+  'reminder.notificationMany': '{n} workouts left to reach your weekly goal.',
 } as const;
 
 export type TKey = keyof typeof en;
