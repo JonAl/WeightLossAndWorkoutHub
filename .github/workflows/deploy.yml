@@ -27,7 +27,7 @@ jobs:
           cache: npm
       # Asks GitHub where this site is actually served (e.g. "/WeightLossHub.github.io").
       - id: pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
       - run: npm ci
       - run: npm test
       - name: Build
@@ -39,7 +39,7 @@ jobs:
           # SPA fallback: GitHub Pages serves 404.html for unknown paths (e.g. /repo/progress)
           cp dist/index.html dist/404.html
           touch dist/.nojekyll
-      - uses: actions/upload-pages-artifact@v4
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
@@ -51,4 +51,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
