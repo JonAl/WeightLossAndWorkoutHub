@@ -16,6 +16,7 @@ import { currentStreak, workoutWeekStreak } from '../../analytics/adherence';
 import { addWater, setSteps } from '../../db/repositories';
 import { nowLocal } from '../../utils/date';
 import { TodayCard } from './TodayCard';
+import { SmartWorkoutReminders } from './SmartWorkoutReminders';
 
 /** Time-of-day greeting (from GymApp's home screen). */
 function greetingKey(): 'dash.goodMorning' | 'dash.goodAfternoon' | 'dash.goodEvening' {
@@ -87,6 +88,7 @@ export function Dashboard() {
     <div className="space-y-4">
       <PageHeader title={t('dash.title')} subtitle={`${t(greetingKey())} · ${i.date(d0, { weekday: 'long', day: 'numeric', month: 'long' })}`} />
       <TodayCard />
+      <SmartWorkoutReminders />
       {quickButtons}
 
       {profile.unconfirmed.length > 0 && (
