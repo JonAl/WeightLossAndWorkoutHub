@@ -64,6 +64,17 @@ export interface Profile {
   updatedAt: string;
 }
 
+/** Gym-related preferences (all optional for backward compatibility; see getTraining()). */
+export interface TrainingSettings {
+  defaultRestSec: number;
+  autoStartRest: boolean;
+  restSound: boolean;
+  restVibrate: boolean;
+  /** Bar weight and plates are stored in the user's display unit (kg or lb). */
+  barWeight: number;
+  plates: number[];
+}
+
 export interface Settings {
   id: 'settings';
   language: Language;
@@ -71,6 +82,7 @@ export interface Settings {
   theme: ThemeMode;
   enabledHealthKinds: HealthKind[];
   lastBackupAt?: string;
+  training?: Partial<TrainingSettings>;
   updatedAt: string;
 }
 
@@ -179,6 +191,14 @@ export interface CardioData {
   distanceKm?: number;
 }
 
+/** Planned targets copied from a template or the exercise library (used by focus mode & suggestions). */
+export interface ExerciseTarget {
+  sets?: number;
+  repMin?: number;
+  repMax?: number;
+  restSec?: number;
+}
+
 export interface WorkoutExercise {
   id: string;
   name: string;
@@ -186,6 +206,9 @@ export interface WorkoutExercise {
   sets: WorkoutSet[];
   cardio?: CardioData;
   notes?: string;
+  /** Library exercise id, if added from the library. */
+  exerciseId?: string;
+  target?: ExerciseTarget;
 }
 
 export interface Workout {
@@ -208,7 +231,12 @@ export interface TemplateExercise {
   name: string;
   kind: ExerciseKind;
   targetSets: number;
+  /** Upper end of the rep range (or the single target). */
   targetReps?: number;
+  /** Lower end of the rep range, when a range like 8–12 is used. */
+  repMin?: number;
+  restSec?: number;
+  exerciseId?: string;
 }
 
 export interface WorkoutTemplate {
@@ -247,6 +275,63 @@ export interface DoseSchedule {
   updatedAt: string;
 }
 
+// ---------- exercise library ----------
+export type ExerciseCategory = 'chest' | 'back' | 'shoulders' | 'legs' | 'arms' | 'core' | 'cardio';
+export const EXERCISE_CATEGORIES: ExerciseCategory[] = ['chest', 'back', 'shoulders', 'legs', 'arms', 'core', 'cardio'];
+export type Equipment = 'barbell' | 'dumbbell' | 'machine' | 'cable' | 'bodyweight' | 'kettlebell' | 'band' | 'cardioMachine';
+export const EQUIPMENT: Equipment[] = ['barbell', 'dumbbell', 'machine', 'cable', 'bodyweight', 'kettlebell', 'band', 'cardioMachine'];
+export type Muscle = 'chest' | 'upperBack' | 'lats' | 'traps' | 'frontDelts' | 'sideDelts' | 'rearDelts' | 'biceps' | 'triceps' | 'forearms' | 'quads' | 'hamstrings' | 'glutes' | 'calves' | 'adductors' | 'abs' | 'obliques' | 'lowerBack' | 'fullBody' | 'cardio';
+/** Movement pattern — selects the animated illustration. */
+export type MovementPattern = 'squat' | 'hinge' | 'lunge' | 'pushH' | 'pushV' | 'pullV' | 'pullH' | 'curl' | 'extension' | 'raise' | 'fly' | 'core' | 'calf' | 'legMachine' | 'cardio';
+
+export interface LibraryExercise {
+  id: string;
+  /** Exercise names are kept in English (as used in most Greek gyms) so history matches across languages. */
+  name: string;
+  category: ExerciseCategory;
+  kind: ExerciseKind;
+  equipment: Equipment;
+  primary: Muscle[];
+  secondary: Muscle[];
+  pattern: MovementPattern;
+  defaultSets: number;
+  repMin: number;
+  repMax: number;
+  restSec: number;
+  /** Suggested load step in kg when all reps are achieved. */
+  incrementKg: number;
+  /** Step-by-step cues per language. Custom exercises may have none. */
+  cues?: { el: string[]; en: string[] };
+  custom?: boolean;
+}
+
+export interface CustomExercise extends LibraryExercise {
+  custom: true;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ---------- programs ----------
+/** Weekly plan: index 0 = Monday … 6 = Sunday; value = template id or null (rest day). */
+export interface TrainingProgram {
+  id: string;
+  name: string;
+  active: boolean;
+  days: (string | null)[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ---------- meal plan ----------
+export interface MealPlanEntry {
+  id: string; // `${weekday}-${category}`
+  weekday: number; // 0 = Monday
+  category: MealCategory;
+  savedMealId: string;
+  updatedAt: string;
+}
+
 export type RecommendationStatus = 'dismissed' | 'completed';
 
 export interface RecommendationState {
@@ -276,6 +361,9 @@ export interface AppData {
   schedules: DoseSchedule[];
   recommendationStates: RecommendationState[];
   weeklyReviews: StoredWeeklyReview[];
+  exercises: CustomExercise[];
+  programs: TrainingProgram[];
+  mealPlan: MealPlanEntry[];
 }
 
 export type TableName = keyof AppData;
@@ -293,5 +381,8 @@ export const TABLE_NAMES: TableName[] = [
   'health',
   'schedules',
   'recommendationStates',
-  'weeklyReviews'
+  'weeklyReviews',
+  'exercises',
+  'programs',
+  'mealPlan'
 ];

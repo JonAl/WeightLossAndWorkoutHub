@@ -6,6 +6,7 @@ import { Badge, Card, Field, Input, Notice, PageHeader, Segmented, Toggle } from
 import { useConfirm, useToast } from '../../components/feedback';
 import { deleteAllData, updateProfile, updateSettings } from '../../db/repositories';
 import { ProfileForm } from './ProfileForm';
+import { TrainingSettingsCard } from './TrainingSettingsCard';
 import { ExportImportPanel } from '../reports/ExportImportPanel';
 import { HEALTH_KINDS, type ConfirmableField, type Language, type ThemeMode, type UnitSystem } from '../../types';
 import { calorieEstimate, proteinRecommendation } from '../../analytics/nutrition';
@@ -104,6 +105,8 @@ export function SettingsPage() {
         <p className="mt-2 text-xs muted">{t('settings.estimatesNote')}</p>
         <button className="btn-primary mt-3" onClick={saveTargets}><Save className="h-4 w-4" />{t('common.save')}</button>
       </Card>
+
+      <TrainingSettingsCard key={settings.units} />
 
       <Card title={t('settings.healthCategories')} subtitle={t('settings.healthCategoriesSub')}>
         <div className="divide-y divide-slate-100 dark:divide-navy-800">

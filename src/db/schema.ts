@@ -1,6 +1,6 @@
 import Dexie, { type Table } from 'dexie';
 import type {
-  CustomFood, DailyMetric, DoseSchedule, HealthEntry, MealEntry, Profile, RecommendationState,
+  CustomExercise, CustomFood, DailyMetric, MealPlanEntry, TrainingProgram, DoseSchedule, HealthEntry, MealEntry, Profile, RecommendationState,
   SavedMeal, Settings, StoredWeeklyReview, WaterEntry, WeightEntry, Workout, WorkoutTemplate
 } from '../types';
 import { applyMigrations } from './migrations';
@@ -20,6 +20,9 @@ export class WeightHubDB extends Dexie {
   schedules!: Table<DoseSchedule, string>;
   recommendationStates!: Table<RecommendationState, string>;
   weeklyReviews!: Table<StoredWeeklyReview, string>;
+  exercises!: Table<CustomExercise, string>;
+  programs!: Table<TrainingProgram, string>;
+  mealPlan!: Table<MealPlanEntry, string>;
 
   constructor(name = 'weight-loss-hub') {
     super(name);

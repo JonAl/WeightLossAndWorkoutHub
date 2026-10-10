@@ -1,10 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Check, CheckCircle2, Plus, Save, Trash2, X, LayoutTemplate, ArrowLeft, Timer } from 'lucide-react';
+import { Check, CheckCircle2, Plus, Save, Trash2, X, LayoutTemplate, ArrowLeft, Timer, Calculator } from 'lucide-react';
 import { useI18n } from '../../i18n';
 import { db } from '../../db/schema';
 import { addTemplate, deleteWorkout, saveWorkout } from '../../db/repositories';
-import { useWorkouts } from '../../hooks/useData';
+import { useCustomExercises, useWorkouts } from '../../hooks/useData';
+import { useApp } from '../../app/AppContext';
+import { useRestTimer } from '../../app/RestTimer';
+import { getTraining } from '../../training/settings';
+import { allExercises, findExercise } from '../../training/exercises';
+import { makeExercise } from '../../training/workoutOps';
+import { lsGet, lsSet } from '../../utils/storage';
+import { FocusMode } from './FocusMode';
+import { ExerciseHints } from './ExerciseHints';
+import { PlateCalculator } from './PlateCalculator';
+import { Segmented } from '../../components/ui';
 import { Card, Field, Input, Select, Textarea, cx, parseOptNum } from '../../components/ui';
 import { useConfirm, useToast } from '../../components/feedback';
 import { uid } from '../../utils/id';
@@ -23,6 +33,13 @@ export function WorkoutLogger() {
   const toast = useToast();
   const confirm = useConfirm();
   const all = useWorkouts();
+  const custom = useCustomExercises() ?? [];
+  const { settings } = useApp();
+  const rest = useRestTimer();
+  const tr = getTraining(settings, units);
+  const [mode, setModeState] = useState<'list' | 'focus'>(() => lsGet('wlh:loggerMode', 'list'));
+  const setMode = (m: 'list' | 'focus') => { setModeState(m); lsSet('wlh:loggerMode', m); };
+  const [plates, setPlates] = useState<{ w?: number } | null>(null);
   const [w, setW] = useState<Workout | null | undefined>(undefined);
   const [newName, setNewName] = useState('');
   const [newKind, setNewKind] = useState<ExerciseKind>('resistance');
@@ -42,16 +59,28 @@ export function WorkoutLogger() {
   if (w === undefined) return <div className="p-6 muted" role="status">{t('common.loading')}</div>;
   if (w === null) return <div className="space-y-3 p-2"><p>{t('workout.notFound')}</p><button className="btn-secondary" onClick={() => nav('/workouts')}>{t('common.back')}</button></div>;
 
-  const known = all ? exerciseNames(all) : [];
-  const upd = (patch: Partial<Workout>) => setW({ ...w, ...patch });
-  const updEx = (exId: string, f: (e: WorkoutExercise) => WorkoutExercise) => upd({ exercises: w.exercises.map((e) => (e.id === exId ? f(e) : e)) });
+  const known = [...new Set([...allExercises(custom).map((e) => e.name), ...(all ? exerciseNames(all) : [])])].sort();
+  const history = all ?? [];
+  const onSetDone = (ex: WorkoutExercise, setIndex: number) => {
+    if (!tr.autoStartRest || w.status !== 'active') return;
+    const lib = findExercise(ex.exerciseId ?? ex.name, custom);
+    const sec = ex.sets[setIndex]?.restSec ?? ex.target?.restSec ?? lib?.restSec ?? tr.defaultRestSec;
+    rest.start(sec, `${ex.name} · ${t('focus.setOf', { n: setIndex + 1, total: ex.sets.length })}`);
+  };
+  // Functional updates so several changes in one event (e.g. "complete set" + prefill next set) never overwrite each other.
+  const upd = (patch: Partial<Workout>) => setW((prev) => (prev ? { ...prev, ...patch } : prev));
+  const updEx = (exId: string, f: (e: WorkoutExercise) => WorkoutExercise) => setW((prev) => (prev ? { ...prev, exercises: prev.exercises.map((e) => (e.id === exId ? f(e) : e)) } : prev));
   const updSet = (exId: string, setId: string, patch: Partial<WorkoutSet>) => updEx(exId, (e) => ({ ...e, sets: e.sets.map((s) => (s.id === setId ? { ...s, ...patch } : s)) }));
   const elapsedMin = Math.max(0, Math.round((now - parseLocalDateTime(w.startedAt).getTime()) / 60000));
   const disp = (kg?: number) => (kg === undefined ? '' : String(Math.round(weightToDisplay(kg, units) * 100) / 100));
 
   const addExercise = () => {
     if (!newName.trim()) return;
-    upd({ exercises: [...w.exercises, { id: uid(), name: newName.trim(), kind: newKind, sets: newKind === 'cardio' ? [] : [newSet()], cardio: newKind === 'cardio' ? {} : undefined }] });
+    const lib = findExercise(newName.trim(), custom);
+    const ex: WorkoutExercise = lib
+      ? makeExercise(lib, history.filter((x) => x.id !== w.id))
+      : { id: uid(), name: newName.trim(), kind: newKind, sets: newKind === 'cardio' ? [] : [newSet()], cardio: newKind === 'cardio' ? {} : undefined };
+    upd({ exercises: [...w.exercises, ex] });
     setNewName('');
   };
 
@@ -72,7 +101,7 @@ export function WorkoutLogger() {
     nav('/workouts');
   };
   const saveAsTemplate = async () => {
-    await addTemplate({ name: w.title, type: w.type, exercises: w.exercises.map((e) => ({ name: e.name, kind: e.kind, targetSets: e.sets.length, targetReps: e.sets[0]?.reps })) });
+    await addTemplate({ name: w.title, type: w.type, exercises: w.exercises.map((e) => ({ name: e.name, kind: e.kind, exerciseId: e.exerciseId, targetSets: e.sets.length, repMin: e.target?.repMin, targetReps: e.target?.repMax ?? e.sets[0]?.reps, restSec: e.target?.restSec })) });
     toast(t('workout.templateSaved'));
   };
 
@@ -90,8 +119,16 @@ export function WorkoutLogger() {
           : <label className="inline-flex items-center gap-1">{t('workout.duration')}<input className="input w-20 min-h-[36px] py-1 text-sm" inputMode="numeric" value={w.durationMin ?? ''} onChange={(e) => upd({ durationMin: parseOptNum(e.target.value) })} /> min</label>}
         <span className="muted">· {t('workout.volume')} {i.weight(workoutVolume(w), 0)}</span>
       </div>
+      <div className="flex items-center justify-between gap-2">
+        <Segmented label={t('focus.view')} value={mode} onChange={setMode} options={[{ value: 'list', label: t('focus.list') }, { value: 'focus', label: t('focus.focus') }]} />
+        <button className="btn-secondary min-h-[36px] px-3 text-xs" onClick={() => setPlates({})}><Calculator className="h-4 w-4" />{t('plates.short')}</button>
+      </div>
 
-      {w.exercises.map((ex) => (
+      {mode === 'focus' && w.exercises.length > 0 && (
+        <FocusMode w={w} history={history} custom={custom} updSet={updSet} onSetDone={onSetDone} onPlates={(dw) => setPlates({ w: dw })} />
+      )}
+
+      {(mode === 'list' || w.exercises.length === 0) && w.exercises.map((ex) => (
         <Card key={ex.id} title={ex.name} subtitle={`${td(`workout.kind.${ex.kind}`)}${ex.kind === 'resistance' ? ` · ${t('workout.volume')} ${i.weight(exerciseVolume(ex) ?? 0, 0)}` : ''}`}
           action={<button className="btn-icon text-red-600" aria-label={t('workout.removeExercise', { name: ex.name })} onClick={async () => { if (await confirm({ title: t('workout.removeExerciseTitle'), body: ex.name, danger: true, confirmLabel: t('common.delete') })) upd({ exercises: w.exercises.filter((e) => e.id !== ex.id) }); }}><Trash2 className="h-4 w-4" /></button>}>
           {ex.kind === 'cardio' ? (
@@ -102,6 +139,10 @@ export function WorkoutLogger() {
             </div>
           ) : (
             <>
+              <div className="mb-2 flex items-start justify-between gap-2">
+                <ExerciseHints ex={ex} history={history} excludeId={w.id} custom={custom} />
+                {ex.kind === 'resistance' && <button className="btn-icon h-9 w-9 shrink-0" aria-label={t('plates.title')} title={t('plates.title')} onClick={() => { const top = ex.sets.find((x) => !x.done) ?? ex.sets[0]; setPlates({ w: top?.weightKg !== undefined ? weightToDisplay(top.weightKg, units) : undefined }); }}><Calculator className="h-4 w-4" /></button>}
+              </div>
               <div className="grid grid-cols-[2rem_1fr_1fr_3.5rem_3rem_2.75rem] items-center gap-1.5 text-xs font-medium muted">
                 <span>#</span><span>{t('workout.reps')}</span><span>{ex.kind === 'resistance' ? i.wUnit : t('workout.addedLoad')}</span><span>RPE</span><span>{t('workout.restShort')}</span><span className="sr-only">{t('workout.done')}</span>
               </div>
@@ -109,10 +150,10 @@ export function WorkoutLogger() {
                 <div key={s.id} className={cx('mt-1.5 grid grid-cols-[2rem_1fr_1fr_3.5rem_3rem_2.75rem] items-center gap-1.5', s.done && 'opacity-70')}>
                   <button className="text-sm font-semibold text-slate-500 hover:text-red-600" aria-label={t('workout.removeSet', { n: idx + 1 })} onClick={() => updEx(ex.id, (x) => ({ ...x, sets: x.sets.filter((y) => y.id !== s.id) }))}>{idx + 1}</button>
                   <input className="input min-h-[44px] px-2 text-center" aria-label={`${t('workout.reps')} ${idx + 1}`} inputMode="numeric" value={s.reps ?? ''} onChange={(e) => updSet(ex.id, s.id, { reps: parseOptNum(e.target.value) })} />
-                  <input className="input min-h-[44px] px-2 text-center" aria-label={`${i.wUnit} ${idx + 1}`} inputMode="decimal" defaultValue={disp(s.weightKg)} onBlur={(e) => { const v = parseOptNum(e.target.value); updSet(ex.id, s.id, { weightKg: v === undefined || !Number.isFinite(v) ? undefined : weightFromDisplay(v, units) }); }} />
+                  <input key={`${s.id}-${s.weightKg ?? ''}`} className="input min-h-[44px] px-2 text-center" aria-label={`${i.wUnit} ${idx + 1}`} inputMode="decimal" defaultValue={disp(s.weightKg)} onBlur={(e) => { const v = parseOptNum(e.target.value); updSet(ex.id, s.id, { weightKg: v === undefined || !Number.isFinite(v) ? undefined : weightFromDisplay(v, units) }); }} />
                   <input className="input min-h-[44px] px-1 text-center" aria-label={`RPE ${idx + 1}`} inputMode="decimal" value={s.rpe ?? ''} onChange={(e) => updSet(ex.id, s.id, { rpe: parseOptNum(e.target.value) })} />
                   <input className="input min-h-[44px] px-1 text-center" aria-label={`${t('workout.rest')} ${idx + 1}`} inputMode="numeric" value={s.restSec ?? ''} onChange={(e) => updSet(ex.id, s.id, { restSec: parseOptNum(e.target.value) })} />
-                  <button aria-label={t('workout.markDone', { n: idx + 1 })} aria-pressed={s.done} onClick={() => updSet(ex.id, s.id, { done: !s.done })}
+                  <button aria-label={t('workout.markDone', { n: idx + 1 })} aria-pressed={s.done} onClick={() => { updSet(ex.id, s.id, { done: !s.done }); if (!s.done) onSetDone(ex, idx); }}
                     className={cx('flex h-11 w-11 items-center justify-center rounded-xl border', s.done ? 'border-teal-600 bg-teal-600 text-white' : 'border-slate-300 dark:border-navy-600')}><Check className="h-5 w-5" /></button>
                 </div>
               ))}
@@ -139,6 +180,7 @@ export function WorkoutLogger() {
         <button className="btn-ghost text-red-600" onClick={discard}><X className="h-4 w-4" />{w.status === 'active' ? t('workout.discard') : t('common.delete')}</button>
       </div>
 
+      <PlateCalculator open={plates !== null} onClose={() => setPlates(null)} initial={plates?.w} />
       <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-30 border-t border-slate-200 bg-white/95 p-3 backdrop-blur dark:border-navy-700 dark:bg-navy-900/95 md:bottom-0 md:left-64">
         {w.status === 'active'
           ? <button className="btn-primary w-full" onClick={complete}><CheckCircle2 className="h-5 w-5" />{t('workout.complete')}</button>

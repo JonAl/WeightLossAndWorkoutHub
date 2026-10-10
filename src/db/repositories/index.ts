@@ -1,6 +1,7 @@
 import { db } from '../schema';
-import { initialProfile, initialSettings, starterTemplates } from '../defaults';
+import { initialProfile, initialSettings, starterProgram, starterTemplates } from '../defaults';
 import type {
+  CustomExercise, MealCategory, TrainingProgram,
   CustomFood, DailyMetric, DoseSchedule, HealthEntry, MealEntry, Profile, RecommendationStatus,
   SavedMeal, Settings, StoredWeeklyReview, WaterEntry, WeightEntry, Workout, WorkoutTemplate
 } from '../../types';
@@ -12,10 +13,14 @@ type New<T> = Omit<T, 'id' | 'createdAt' | 'updatedAt'> & { id?: string };
 
 /** Ensure singleton rows exist. Safe to call repeatedly. */
 export async function ensureSeed(): Promise<void> {
-  await db.transaction('rw', db.profile, db.settings, db.templates, async () => {
+  await db.transaction('rw', [db.profile, db.settings, db.templates, db.programs], async () => {
     if (!(await db.profile.get('profile'))) {
       await db.profile.put(initialProfile());
-      if ((await db.templates.count()) === 0) await db.templates.bulkPut(starterTemplates());
+      if ((await db.templates.count()) === 0) {
+        const tpls = starterTemplates();
+        await db.templates.bulkPut(tpls);
+        if ((await db.programs.count()) === 0) await db.programs.put(starterProgram(tpls));
+      }
     }
     if (!(await db.settings.get('settings'))) await db.settings.put(initialSettings());
   });
@@ -88,6 +93,37 @@ export const saveWorkout = (w: Workout) => db.workouts.put({ ...w, updatedAt: is
 export const deleteWorkout = (id: string) => db.workouts.delete(id);
 export const addTemplate = async (e: New<WorkoutTemplate>) => { const r = stamp(e); await db.templates.put(r); return r; };
 export const deleteTemplate = (id: string) => db.templates.delete(id);
+
+export const updateTemplate = (id: string, patch: Partial<WorkoutTemplate>) => db.templates.update(id, { ...patch, updatedAt: isoNow() });
+
+// ---------- exercise library ----------
+export async function saveCustomExercise(e: Omit<CustomExercise, 'createdAt' | 'updatedAt' | 'custom'> & { createdAt?: string }): Promise<CustomExercise> {
+  const now = isoNow();
+  const r: CustomExercise = { ...e, custom: true, createdAt: e.createdAt ?? now, updatedAt: now };
+  await db.exercises.put(r);
+  return r;
+}
+export const deleteCustomExercise = (id: string) => db.exercises.delete(id);
+
+// ---------- programs ----------
+export async function saveProgram(p: Omit<TrainingProgram, 'createdAt' | 'updatedAt' | 'id'> & { id?: string; createdAt?: string }): Promise<TrainingProgram> {
+  const now = isoNow();
+  const r: TrainingProgram = { ...p, id: p.id ?? uid(), createdAt: p.createdAt ?? now, updatedAt: now };
+  await db.transaction('rw', db.programs, async () => {
+    if (r.active) await db.programs.toCollection().modify((x: TrainingProgram) => { if (x.id !== r.id) x.active = false; });
+    await db.programs.put(r);
+  });
+  return r;
+}
+export const deleteProgram = (id: string) => db.programs.delete(id);
+
+// ---------- meal plan ----------
+export async function setMealPlanSlot(weekday: number, category: MealCategory, savedMealId: string | null): Promise<void> {
+  const id = `${weekday}-${category}`;
+  if (!savedMealId) await db.mealPlan.delete(id);
+  else await db.mealPlan.put({ id, weekday, category, savedMealId, updatedAt: isoNow() });
+}
+export const clearMealPlan = () => db.mealPlan.clear();
 
 // ---------- health ----------
 export const addHealth = async (e: New<HealthEntry>) => { const r = stamp(e); await db.health.put(r); return r; };

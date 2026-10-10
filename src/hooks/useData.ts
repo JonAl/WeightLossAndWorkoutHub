@@ -14,3 +14,6 @@ export const useHealth = () => useLiveQuery(() => db.health.orderBy('dateTime').
 export const useSchedules = () => useLiveQuery(() => db.schedules.toArray(), [], undefined);
 export const useRecStates = () => useLiveQuery(() => db.recommendationStates.toArray(), [], undefined);
 export const useWeeklyReviews = () => useLiveQuery(() => db.weeklyReviews.toArray(), [], undefined);
+export const useCustomExercises = () => useLiveQuery(() => db.exercises.toArray(), [], undefined);
+export const usePrograms = () => useLiveQuery(() => db.programs.toArray(), [], undefined);
+export const useMealPlan = () => useLiveQuery(() => db.mealPlan.toArray(), [], undefined);

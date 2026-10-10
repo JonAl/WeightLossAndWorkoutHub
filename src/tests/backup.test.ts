@@ -83,3 +83,44 @@ describe('IndexedDB round trip (fake-indexeddb)', () => {
     expect(findPossibleDuplicate(all, { id: a.id, dateTime: '2026-03-01T07:00', weightKg: 145 })).toBeUndefined();
   });
 });
+
+import Dexie from 'dexie';
+import { WeightHubDB } from '../db/schema';
+import { SCHEMA_VERSIONS } from '../db/migrations';
+
+describe('schema migrations v1 → v3 (GymApp merge)', () => {
+  it('keeps existing data and adds the new tables', async () => {
+    const name = 'migration-test';
+    const old = new Dexie(name);
+    for (const v of SCHEMA_VERSIONS.filter((x) => x.version <= 1)) old.version(v.version).stores(v.stores);
+    await old.open();
+    await old.table('weights').put(w('2026-03-01T07:00', 140));
+    await old.table('profile').put({ id: 'profile', heightCm: 182, startWeightKg: 155, proteinTargetG: 160 });
+    old.close();
+
+    const fresh = new WeightHubDB(name);
+    await fresh.open();
+    expect(fresh.verno).toBe(3);
+    expect(await fresh.weights.count()).toBe(1);
+    expect((await fresh.profile.get('profile'))!.fiberTargetG).toBe(30);
+    await fresh.exercises.put({ id: 'x', name: 'X', custom: true } as never);
+    expect(await fresh.exercises.count()).toBe(1);
+    expect(await fresh.programs.count()).toBe(0);
+    fresh.close();
+  });
+
+  it('imports old backups without the new tables, and new backups with them', () => {
+    const oldFile = validateBackup(file({ weights: [w('2026-03-01T07:00', 100)] }));
+    expect(oldFile.ok).toBe(true);
+    expect(oldFile.data!.programs).toEqual([]);
+    const newFile = validateBackup(file({
+      programs: [{ id: 'p', name: 'PPL', active: true, days: ['a', null, null, null, null, null, null] }, { id: 'bad', name: 'x', active: true, days: [] }],
+      mealPlan: [{ id: '0-lunch', weekday: 0, category: 'lunch', savedMealId: 's' }],
+      exercises: [{ id: 'c', name: 'Landmine Press', category: 'shoulders', kind: 'resistance', repMin: 8, repMax: 12 }]
+    }));
+    expect(newFile.data!.programs).toHaveLength(1);
+    expect(newFile.tables.find((x) => x.table === 'programs')!.invalid).toHaveLength(1);
+    expect(newFile.data!.mealPlan).toHaveLength(1);
+    expect(newFile.data!.exercises).toHaveLength(1);
+  });
+});

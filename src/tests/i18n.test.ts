@@ -3,7 +3,8 @@ import { en } from '../i18n/en';
 import { el } from '../i18n/el';
 import { createI18n, interpolate } from '../i18n';
 import { RULES } from '../coaching/rules';
-import { HEALTH_KINDS, MEAL_CATEGORIES, MEASUREMENT_FIELDS, TABLE_NAMES, WORKOUT_TYPES } from '../types';
+import { EQUIPMENT, EXERCISE_CATEGORIES, HEALTH_KINDS, MEAL_CATEGORIES, MEASUREMENT_FIELDS, TABLE_NAMES, WORKOUT_TYPES } from '../types';
+import { EXERCISE_LIBRARY } from '../data/exercises';
 
 const dynamicKeys = [
   ...Object.keys(RULES).flatMap((r) => [`coach.${r}.title`, `coach.${r}.body`]),
@@ -13,6 +14,10 @@ const dynamicKeys = [
   ...['7', '30', '90', '365', 'all'].map((r) => `range.${r}`), ...['under', 'normal', 'over', 'obese1', 'obese2', 'obese3'].map((b) => `bmi.${b}`),
   ...['g', 'ml', 'serving', 'piece'].map((u) => `unit.${u}`), ...['calories', 'proteinG', 'carbsG', 'fatG', 'fiberG'].map((n) => `nutrient.${n}`),
   ...['weight', 'protein', 'workouts'].flatMap((m) => ['improved', 'stable', 'attention', 'insufficient'].map((b) => `review.${m}.${b}`)),
+  ...EXERCISE_CATEGORIES.map((c) => `exCat.${c}`), ...EQUIPMENT.map((e) => `equip.${e}`),
+  ...[...new Set(EXERCISE_LIBRARY.flatMap((e) => [...e.primary, ...e.secondary]))].map((m) => `muscle.${m}`),
+  ...[0, 1, 2, 3, 4, 5, 6].flatMap((d) => [`weekday.${d}`, `weekdayShort.${d}`]),
+  ...['increase', 'moreReps', 'hold', 'addReps'].map((r) => `hints.sug.${r}`),
   'review.fiber.stable', 'review.fiber.attention', 'review.sleep.stable', 'review.sleep.attention', 'review.coverage.stable', 'review.coverage.attention'
 ];
 

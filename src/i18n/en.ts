@@ -138,7 +138,7 @@ export const en = {
   'workout.bestVolume': 'Best session volume', 'workout.topSet': 'Top set',
   'workout.fromTemplate': 'From a template', 'workout.repeatLast': 'Repeat last workout', 'workout.emptySession': 'Empty session',
   'workout.type': 'Type', 'workout.templateName': 'Template name', 'workout.templateExercises': 'Exercises (one per line)',
-  'workout.templateHint': 'Format: “Name, 4x8”. Add “; cardio” for cardio exercises.',
+  'workout.templateHint': 'One per line: “Name, 4x8” or a range “Name, 3x8-12”. Add “; cardio” for cardio. Names from the exercise library are linked automatically.',
   'workout.type.push': 'Push', 'workout.type.pull': 'Pull', 'workout.type.legs': 'Legs', 'workout.type.upper': 'Upper body', 'workout.type.lower': 'Lower body', 'workout.type.fullBody': 'Full body', 'workout.type.cardio': 'Cardio', 'workout.type.custom': 'Custom',
   'workout.kind': 'Exercise type', 'workout.kind.resistance': 'Weighted', 'workout.kind.bodyweight': 'Bodyweight', 'workout.kind.cardio': 'Cardio',
   'workout.notFound': 'Workout not found.', 'workout.title': 'Workout title', 'workout.elapsed': '{min} min', 'workout.duration': 'Duration',
@@ -300,7 +300,64 @@ export const en = {
   'pwa.httpsNote': 'Installation and offline mode need the app served over HTTPS (or localhost during development).',
   'pwa.offlineReady': 'Ready to work offline.', 'pwa.updateAvailable': 'A new version is available.', 'pwa.reload': 'Update',
   'storage.errorTitle': 'Local storage is unavailable', 'storage.errorBody': 'The app could not open its on-device database. This can happen in private browsing, when site storage is blocked, or if the database is damaged.',
-  'storage.retry': 'Try again', 'storage.reset': 'Reset local database', 'storage.resetConfirm': 'Delete the local database and start fresh? Any data in it will be lost.'
+  'storage.retry': 'Try again', 'storage.reset': 'Reset local database', 'storage.resetConfirm': 'Delete the local database and start fresh? Any data in it will be lost.',
+  // ---------- GymApp merge ----------
+  'dash.goodMorning': 'Good morning 👋', 'dash.goodAfternoon': 'Good afternoon 👋', 'dash.goodEvening': 'Good evening 👋',
+  'today.title': "Today's workout", 'today.meta': '{n} exercises • about {min} min', 'today.inProgress': 'In progress — {done} of {total} sets done',
+  'today.done': 'Workout done today', 'today.rest': 'Rest day', 'today.noPlan': 'No weekly plan yet', 'today.next': 'Next: {name} on {day}.',
+  'today.setupPlan': 'Set up a weekly plan to see your workout here.', 'today.start': 'Start workout', 'today.startOther': 'Start a workout', 'today.plan': 'Plan',
+  'workout.plan': 'Plan', 'workout.library': 'Exercises', 'workout.editTemplate': 'Edit template',
+  'nutrition.tabPlan': 'Meal plan',
+
+  'lib.search': 'Search exercises or muscles…', 'lib.category': 'Category', 'lib.count': '{n} exercises', 'lib.none': 'No exercises match',
+  'lib.addCustom': 'Custom exercise', 'lib.editCustom': 'Edit custom exercise', 'lib.custom': 'custom', 'lib.cardioMinutes': '{min}–{max} min',
+  'lib.rest': 'rest {s} s', 'lib.primary': 'Main muscles', 'lib.secondary': 'Also works', 'lib.howTo': 'How to do it', 'lib.illustration': 'Animated illustration of {name}',
+  'lib.yourHistory': 'Your history', 'lib.lastTime': 'Last time ({date}): {sets}', 'lib.noHistory': 'Not logged yet.', 'lib.pr': 'Best: {w} × {reps} · est. 1RM {e1rm}',
+  'lib.addToActive': 'Add to current workout', 'lib.startExercise': 'Start exercise', 'lib.addedToWorkout': 'Added to your workout',
+  'lib.chooseTemplate': 'Add to template…', 'lib.addToTemplate': 'Add', 'lib.addedToTemplate': 'Added to {name}',
+  'lib.deleteBody': 'Workouts that used this exercise keep their history.', 'lib.nameHint': 'Use the same name every time so history and records match.',
+  'lib.equipment': 'Equipment', 'lib.defaultSets': 'Sets', 'lib.repMin': 'Reps from', 'lib.repMax': 'Reps to', 'lib.restSec': 'Rest (s)',
+  'lib.increment': 'Weight step (kg)', 'lib.incrementHint': 'Added when all sets reach the top of the rep range',
+  'exCat.chest': 'Chest', 'exCat.back': 'Back', 'exCat.shoulders': 'Shoulders', 'exCat.legs': 'Legs', 'exCat.arms': 'Arms', 'exCat.core': 'Core', 'exCat.cardio': 'Cardio',
+  'equip.barbell': 'Barbell', 'equip.dumbbell': 'Dumbbells', 'equip.machine': 'Machine', 'equip.cable': 'Cable', 'equip.bodyweight': 'Bodyweight', 'equip.kettlebell': 'Kettlebell', 'equip.band': 'Band', 'equip.cardioMachine': 'Cardio machine',
+  'muscle.chest': 'Chest', 'muscle.upperBack': 'Upper back', 'muscle.lats': 'Lats', 'muscle.traps': 'Traps', 'muscle.frontDelts': 'Front delts', 'muscle.sideDelts': 'Side delts', 'muscle.rearDelts': 'Rear delts',
+  'muscle.biceps': 'Biceps', 'muscle.triceps': 'Triceps', 'muscle.forearms': 'Forearms', 'muscle.quads': 'Quads', 'muscle.hamstrings': 'Hamstrings', 'muscle.glutes': 'Glutes', 'muscle.calves': 'Calves',
+  'muscle.adductors': 'Adductors', 'muscle.abs': 'Abs', 'muscle.obliques': 'Obliques', 'muscle.lowerBack': 'Lower back', 'muscle.fullBody': 'Full body', 'muscle.cardio': 'Heart & lungs',
+
+  'focus.view': 'Logger view', 'focus.list': 'List', 'focus.focus': 'Focus', 'focus.empty': 'Add an exercise to start.',
+  'focus.prev': 'Previous exercise', 'focus.next': 'Next exercise', 'focus.exerciseOf': 'Exercise {n} of {total}', 'focus.setOf': 'Set {n} of {total}',
+  'focus.allDone': 'All sets done', 'focus.reps': 'REPS', 'focus.lessWeight': 'Less weight', 'focus.moreWeight': 'More weight', 'focus.lessReps': 'One rep less', 'focus.moreReps': 'One rep more',
+  'focus.target': 'Target: {min}–{max} reps', 'focus.completeSet': 'Complete set', 'focus.finishExercise': 'Finish exercise', 'focus.exerciseDone': 'Exercise done — swipe to the next one with the arrows.',
+  'focus.cardioHint': 'Log cardio minutes and distance in the List view.',
+  'hints.target': 'Plan: {sets} × {min}–{max}', 'hints.last': 'Last ({date}): {sets}',
+  'hints.sug.increase': 'Suggestion: {w} — you hit the top of the range last time.', 'hints.sug.moreReps': 'Suggestion: stay at {w}, aim for {reps} reps.',
+  'hints.sug.hold': 'Suggestion: keep {w} until all sets reach {reps}+ reps.', 'hints.sug.addReps': 'Suggestion: aim for {reps} reps.',
+
+  'rest.title': 'Rest', 'rest.minus15': '15 seconds less', 'rest.plus15': '15 seconds more', 'rest.skip': 'Skip rest', 'rest.remaining': '{s} seconds left', 'rest.done': 'Rest over — next set! 💪',
+
+  'plates.title': 'Plate calculator', 'plates.short': 'Plates', 'plates.target': 'Total weight', 'plates.barInfo': 'Bar {bar} {u} (change in Settings)',
+  'plates.perSide': 'Load per side', 'plates.barOnly': 'Bar only.', 'plates.remainder': 'Closest possible with your plates: {loaded} {u}.',
+  'plates.warmup': 'Warm-up sets', 'plates.bar': 'Empty bar', 'plates.warmupNote': 'A common ramp (bar, ~40 %, 60 %, 80 %). Adjust to how you feel.',
+  'plates.settingsNote': 'Bar weight and available plates are set in Settings → Training.',
+
+  'plan.weekly': 'Weekly plan', 'plan.weeklySub': 'Pick a template or rest for each day', 'plan.name': 'Plan name', 'plan.defaultName': 'My plan', 'plan.rest': 'Rest',
+  'plan.tplInfo': '{n} exercises • ~{min} min', 'plan.targetMismatch': 'The plan has {planned} training days; your weekly target in Settings is {target}.',
+  'plan.calendar': 'Calendar', 'plan.prevMonth': 'Previous month', 'plan.nextMonth': 'Next month', 'plan.doneN': '{n} workouts done', 'plan.plannedX': 'Planned: {name}',
+  'plan.legendDone': 'Completed', 'plan.legendPlanned': 'Planned', 'plan.nothing': 'Nothing planned or logged.', 'plan.note': "The plan drives the dashboard's “Today's workout” card. Changing it never edits past workouts.",
+  'weekday.0': 'Monday', 'weekday.1': 'Tuesday', 'weekday.2': 'Wednesday', 'weekday.3': 'Thursday', 'weekday.4': 'Friday', 'weekday.5': 'Saturday', 'weekday.6': 'Sunday',
+  'weekdayShort.0': 'Mon', 'weekdayShort.1': 'Tue', 'weekdayShort.2': 'Wed', 'weekdayShort.3': 'Thu', 'weekdayShort.4': 'Fri', 'weekdayShort.5': 'Sat', 'weekdayShort.6': 'Sun',
+
+  'mp.intro': 'Assign your saved meals to each day. The shopping list adds up everything planned for the week.',
+  'mp.noSaved': 'No saved meals yet', 'mp.noSavedBody': 'Log a meal in the Daily log and tap the bookmark icon to save it — then plan it here.',
+  'mp.days': 'Days of the week', 'mp.dayTotals': 'Planned: {p} g protein · {k} kcal', 'mp.logToday': "Log today's plan", 'mp.logTodayTitle': "Log today's planned meals?", 'mp.logTodayBody': '{n} meals will be added to today’s log.',
+  'mp.shopping': 'Shopping list', 'mp.shoppingSub': 'All planned meals of the week', 'mp.emptyList': 'Plan some meals to build a shopping list.', 'mp.copy': 'Copy list',
+  'mp.copied': 'Shopping list copied', 'mp.copyFailed': 'Copying is not allowed here — select the text manually.', 'mp.uncheckAll': 'Uncheck all', 'mp.clear': 'Clear plan',
+  'mp.clearTitle': 'Clear the weekly meal plan?', 'mp.clearBody': 'Saved meals are kept; only the plan is removed.',
+
+  'trs.title': 'Training', 'trs.sub': 'Rest timer, bar and plates', 'trs.autoRest': 'Start rest timer automatically', 'trs.autoRestHint': 'After every completed set',
+  'trs.sound': 'Sound when rest is over', 'trs.vibrate': 'Vibrate when rest is over', 'trs.defaultRest': 'Default rest (s)', 'trs.bar': 'Bar weight', 'trs.plates': 'Available plates', 'trs.platesHint': 'Comma-separated',
+  'trs.bgNote': 'Alerts work while the app is open. Web apps cannot reliably alert in the background when the screen is off.',
+  'table.exercises': 'Custom exercises', 'table.programs': 'Training plans', 'table.mealPlan': 'Meal plan'
 } as const;
 
 export type TKey = keyof typeof en;

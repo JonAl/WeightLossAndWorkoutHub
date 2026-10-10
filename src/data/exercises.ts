@@ -1,0 +1,162 @@
+import type { LibraryExercise } from '../types';
+
+type Def = Omit<LibraryExercise, 'cues' | 'kind'> & { kind?: LibraryExercise['kind']; el: string[]; en: string[] };
+
+const d = (x: Def): LibraryExercise => {
+  const { el, en, kind, ...rest } = x;
+  return { ...rest, kind: kind ?? 'resistance', cues: { el, en } };
+};
+
+/**
+ * Built-in exercise catalogue (merged from GymApp and extended).
+ * Rep ranges, rest and increments are sensible starting points, not prescriptions.
+ */
+export const EXERCISE_LIBRARY: LibraryExercise[] = [
+  // ---------- legs ----------
+  d({ id: 'squat', name: 'Barbell Squat', category: 'legs', equipment: 'barbell', primary: ['quads', 'glutes'], secondary: ['adductors', 'lowerBack'], pattern: 'squat', defaultSets: 4, repMin: 6, repMax: 10, restSec: 150, incrementKg: 5,
+    en: ['Bar on upper back, feet shoulder-width, brace your core.', 'Sit down and back until thighs are at least parallel, knees tracking over toes.', 'Drive up through the whole foot, keeping the chest up.'],
+    el: ['Μπάρα στο πάνω μέρος της πλάτης, πόδια στο πλάτος των ώμων, σφίξε τον κορμό.', 'Κάτσε κάτω και πίσω μέχρι οι μηροί να είναι τουλάχιστον παράλληλοι, γόνατα προς τα δάχτυλα.', 'Σπρώξε προς τα πάνω με όλο το πέλμα, κρατώντας το στήθος ψηλά.'] }),
+  d({ id: 'goblet-squat', name: 'Goblet Squat', category: 'legs', equipment: 'dumbbell', primary: ['quads', 'glutes'], secondary: ['abs'], pattern: 'squat', defaultSets: 3, repMin: 10, repMax: 15, restSec: 90, incrementKg: 2.5,
+    en: ['Hold a dumbbell vertically at your chest.', 'Squat between your knees with an upright torso.', 'Stand up by pushing the floor away.'],
+    el: ['Κράτα έναν αλτήρα κάθετα μπροστά στο στήθος.', 'Κάνε βαθύ κάθισμα ανάμεσα στα γόνατα με όρθιο κορμό.', 'Σήκω πιέζοντας το πάτωμα.'] }),
+  d({ id: 'leg-press', name: 'Leg Press', category: 'legs', equipment: 'machine', primary: ['quads', 'glutes'], secondary: ['hamstrings'], pattern: 'legMachine', defaultSets: 4, repMin: 10, repMax: 15, restSec: 120, incrementKg: 10,
+    en: ['Feet hip-width in the middle of the platform.', 'Lower until knees reach about 90° without the hips lifting off.', 'Press back up without locking the knees hard.'],
+    el: ['Πόδια στο πλάτος της λεκάνης στη μέση της πλατφόρμας.', 'Κατέβασε μέχρι περίπου 90° στα γόνατα χωρίς να σηκώνεται η λεκάνη.', 'Σπρώξε πάνω χωρίς να «κλειδώνεις» απότομα τα γόνατα.'] }),
+  d({ id: 'rdl', name: 'Romanian Deadlift', category: 'legs', equipment: 'barbell', primary: ['hamstrings', 'glutes'], secondary: ['lowerBack'], pattern: 'hinge', defaultSets: 3, repMin: 8, repMax: 12, restSec: 120, incrementKg: 5,
+    en: ['Stand tall with the bar at your thighs, knees slightly bent.', 'Push the hips back, sliding the bar down your legs with a neutral back.', 'Stop when you feel the hamstrings stretch, then drive the hips forward.'],
+    el: ['Όρθιος με τη μπάρα στους μηρούς, γόνατα ελαφρά λυγισμένα.', 'Σπρώξε τη λεκάνη πίσω, η μπάρα γλιστρά στα πόδια με ουδέτερη πλάτη.', 'Σταμάτα όταν τεντωθούν οι οπίσθιοι μηριαίοι και φέρε τη λεκάνη μπροστά.'] }),
+  d({ id: 'deadlift', name: 'Deadlift', category: 'legs', equipment: 'barbell', primary: ['glutes', 'hamstrings', 'lowerBack'], secondary: ['traps', 'quads', 'forearms'], pattern: 'hinge', defaultSets: 3, repMin: 3, repMax: 6, restSec: 180, incrementKg: 5,
+    en: ['Bar over mid-foot, grip just outside the legs.', 'Chest up, back flat, take the slack out of the bar.', 'Push the floor away and lock out with the glutes.'],
+    el: ['Μπάρα πάνω από το μέσο του πέλματος, λαβή λίγο έξω από τα πόδια.', 'Στήθος ψηλά, ίσια πλάτη, τέντωσε τη μπάρα πριν σηκώσεις.', 'Σπρώξε το πάτωμα και κλείδωσε με τους γλουτούς.'] }),
+  d({ id: 'hip-thrust', name: 'Hip Thrust', category: 'legs', equipment: 'barbell', primary: ['glutes'], secondary: ['hamstrings'], pattern: 'hinge', defaultSets: 3, repMin: 8, repMax: 12, restSec: 90, incrementKg: 5,
+    en: ['Upper back on a bench, bar padded across the hips.', 'Drive the hips up until the torso is level, chin tucked.', 'Squeeze the glutes at the top, lower under control.'],
+    el: ['Πάνω πλάτη σε πάγκο, μπάρα με προστατευτικό στη λεκάνη.', 'Σήκωσε τη λεκάνη μέχρι ο κορμός να γίνει οριζόντιος, πηγούνι μέσα.', 'Σφίξε τους γλουτούς πάνω και κατέβα ελεγχόμενα.'] }),
+  d({ id: 'lunge', name: 'Walking Lunge', category: 'legs', equipment: 'dumbbell', primary: ['quads', 'glutes'], secondary: ['adductors'], pattern: 'lunge', defaultSets: 3, repMin: 10, repMax: 12, restSec: 90, incrementKg: 2.5,
+    en: ['Step forward into a long stride.', 'Lower until the back knee nearly touches the floor.', 'Push through the front heel into the next step.'],
+    el: ['Κάνε ένα μεγάλο βήμα μπροστά.', 'Κατέβα μέχρι το πίσω γόνατο σχεδόν να ακουμπήσει το πάτωμα.', 'Σπρώξε από τη φτέρνα του μπροστινού ποδιού στο επόμενο βήμα.'] }),
+  d({ id: 'bulgarian', name: 'Bulgarian Split Squat', category: 'legs', equipment: 'dumbbell', primary: ['quads', 'glutes'], secondary: ['adductors'], pattern: 'lunge', defaultSets: 3, repMin: 8, repMax: 12, restSec: 90, incrementKg: 2.5,
+    en: ['Rear foot on a bench, front foot well forward.', 'Drop straight down, torso slightly forward.', 'Drive up through the front foot.'],
+    el: ['Πίσω πόδι σε πάγκο, μπροστινό αρκετά μπροστά.', 'Κατέβα κάθετα με ελαφριά κλίση του κορμού.', 'Σπρώξε πάνω από το μπροστινό πόδι.'] }),
+  d({ id: 'leg-curl', name: 'Leg Curl', category: 'legs', equipment: 'machine', primary: ['hamstrings'], secondary: ['calves'], pattern: 'legMachine', defaultSets: 3, repMin: 10, repMax: 15, restSec: 75, incrementKg: 2.5,
+    en: ['Pad just above the heels, knees aligned with the pivot.', 'Curl the weight fully without lifting the hips.', 'Lower slowly to full extension.'],
+    el: ['Μαξιλαράκι λίγο πάνω από τις φτέρνες, γόνατα στον άξονα του μηχανήματος.', 'Λύγισε πλήρως χωρίς να σηκώνεται η λεκάνη.', 'Κατέβασε αργά μέχρι πλήρη έκταση.'] }),
+  d({ id: 'leg-extension', name: 'Leg Extension', category: 'legs', equipment: 'machine', primary: ['quads'], secondary: [], pattern: 'legMachine', defaultSets: 3, repMin: 10, repMax: 15, restSec: 75, incrementKg: 2.5,
+    en: ['Back against the pad, knees at the machine pivot.', 'Extend the legs until straight and squeeze the quads.', 'Lower under control.'],
+    el: ['Πλάτη στην πλάτη του καθίσματος, γόνατα στον άξονα.', 'Τέντωσε τα πόδια και σφίξε τους τετρακέφαλους.', 'Κατέβασε ελεγχόμενα.'] }),
+  d({ id: 'calf-raise', name: 'Standing Calf Raise', category: 'legs', equipment: 'machine', primary: ['calves'], secondary: [], pattern: 'calf', defaultSets: 3, repMin: 12, repMax: 20, restSec: 60, incrementKg: 5,
+    en: ['Balls of the feet on the edge, heels free.', 'Rise as high as possible and pause.', 'Lower into a full stretch.'],
+    el: ['Μπροστινό μέρος των πελμάτων στην άκρη, φτέρνες ελεύθερες.', 'Ανέβα όσο πιο ψηλά γίνεται και κράτα.', 'Κατέβα σε πλήρη διάταση.'] }),
+
+  // ---------- chest ----------
+  d({ id: 'bench', name: 'Bench Press', category: 'chest', equipment: 'barbell', primary: ['chest'], secondary: ['triceps', 'frontDelts'], pattern: 'pushH', defaultSets: 4, repMin: 6, repMax: 10, restSec: 150, incrementKg: 2.5,
+    en: ['Eyes under the bar, shoulder blades pulled back and down.', 'Lower the bar to mid-chest with elbows about 45°.', 'Press up and slightly back, feet planted.'],
+    el: ['Μάτια κάτω από τη μπάρα, ωμοπλάτες πίσω και κάτω.', 'Κατέβασε τη μπάρα στη μέση του στήθους με αγκώνες περίπου 45°.', 'Σπρώξε πάνω και ελαφρά πίσω, πόδια σταθερά στο πάτωμα.'] }),
+  d({ id: 'incline-db', name: 'Incline Dumbbell Press', category: 'chest', equipment: 'dumbbell', primary: ['chest', 'frontDelts'], secondary: ['triceps'], pattern: 'pushH', defaultSets: 3, repMin: 8, repMax: 12, restSec: 120, incrementKg: 2,
+    en: ['Bench at 30–45°, dumbbells at chest level.', 'Press up until the arms are almost straight.', 'Lower slowly to a comfortable stretch.'],
+    el: ['Πάγκος στις 30–45°, αλτήρες στο ύψος του στήθους.', 'Σπρώξε πάνω μέχρι τα χέρια σχεδόν να τεντώσουν.', 'Κατέβασε αργά σε άνετη διάταση.'] }),
+  d({ id: 'db-bench', name: 'Dumbbell Bench Press', category: 'chest', equipment: 'dumbbell', primary: ['chest'], secondary: ['triceps', 'frontDelts'], pattern: 'pushH', defaultSets: 3, repMin: 8, repMax: 12, restSec: 120, incrementKg: 2,
+    en: ['Lie flat, dumbbells over the chest.', 'Lower with elbows at about 45° to the body.', 'Press up, bringing the dumbbells slightly together.'],
+    el: ['Ξαπλωμένος, αλτήρες πάνω από το στήθος.', 'Κατέβασε με αγκώνες περίπου 45° από το σώμα.', 'Σπρώξε πάνω φέρνοντας ελαφρά τους αλτήρες μαζί.'] }),
+  d({ id: 'chest-press', name: 'Machine Chest Press', category: 'chest', equipment: 'machine', primary: ['chest'], secondary: ['triceps', 'frontDelts'], pattern: 'pushH', defaultSets: 3, repMin: 10, repMax: 12, restSec: 90, incrementKg: 5,
+    en: ['Handles at mid-chest height.', 'Press forward without shrugging the shoulders.', 'Return slowly until you feel a chest stretch.'],
+    el: ['Λαβές στο ύψος της μέσης του στήθους.', 'Σπρώξε μπροστά χωρίς να σηκώνεις τους ώμους.', 'Γύρνα αργά μέχρι να νιώσεις διάταση στο στήθος.'] }),
+  d({ id: 'cable-fly', name: 'Cable Fly', category: 'chest', equipment: 'cable', primary: ['chest'], secondary: ['frontDelts'], pattern: 'fly', defaultSets: 3, repMin: 12, repMax: 15, restSec: 75, incrementKg: 2.5,
+    en: ['Pulleys at shoulder height, slight bend in the elbows.', 'Bring the hands together in a wide arc.', 'Open slowly until the chest stretches.'],
+    el: ['Τροχαλίες στο ύψος των ώμων, αγκώνες ελαφρά λυγισμένοι.', 'Φέρε τα χέρια μαζί σε ένα φαρδύ τόξο.', 'Άνοιξε αργά μέχρι να τεντωθεί το στήθος.'] }),
+  d({ id: 'pushup', name: 'Push-up', category: 'chest', equipment: 'bodyweight', kind: 'bodyweight', primary: ['chest'], secondary: ['triceps', 'frontDelts', 'abs'], pattern: 'pushH', defaultSets: 3, repMin: 8, repMax: 20, restSec: 75, incrementKg: 0,
+    en: ['Hands slightly wider than shoulders, body in a straight line.', 'Lower the chest close to the floor.', 'Push back up without letting the hips sag.'],
+    el: ['Χέρια λίγο πιο ανοιχτά από τους ώμους, σώμα σε ευθεία.', 'Κατέβασε το στήθος κοντά στο πάτωμα.', 'Σπρώξε πάνω χωρίς να πέφτει η λεκάνη.'] }),
+  d({ id: 'dips', name: 'Dips', category: 'chest', equipment: 'bodyweight', kind: 'bodyweight', primary: ['chest', 'triceps'], secondary: ['frontDelts'], pattern: 'pushV', defaultSets: 3, repMin: 6, repMax: 12, restSec: 90, incrementKg: 2.5,
+    en: ['Support yourself on the bars, slight forward lean.', 'Lower until the shoulders are just below the elbows.', 'Press back up to straight arms.'],
+    el: ['Στήριξη στις μπάρες με ελαφριά κλίση μπροστά.', 'Κατέβα μέχρι οι ώμοι να είναι λίγο κάτω από τους αγκώνες.', 'Σπρώξε πάνω μέχρι να τεντωθούν τα χέρια.'] }),
+
+  // ---------- back ----------
+  d({ id: 'lat-pulldown', name: 'Lat Pulldown', category: 'back', equipment: 'cable', primary: ['lats'], secondary: ['biceps', 'upperBack'], pattern: 'pullV', defaultSets: 3, repMin: 8, repMax: 12, restSec: 90, incrementKg: 5,
+    en: ['Grip slightly wider than shoulders, thighs under the pads.', 'Pull the bar to the upper chest, leading with the elbows.', 'Let the arms extend fully on the way up.'],
+    el: ['Λαβή λίγο πιο ανοιχτή από τους ώμους, μηροί κάτω από τα μαξιλάρια.', 'Τράβα τη μπάρα στο πάνω στήθος οδηγώντας με τους αγκώνες.', 'Άφησε τα χέρια να τεντωθούν πλήρως στην επιστροφή.'] }),
+  d({ id: 'pullup', name: 'Pull-up', category: 'back', equipment: 'bodyweight', kind: 'bodyweight', primary: ['lats'], secondary: ['biceps', 'upperBack'], pattern: 'pullV', defaultSets: 3, repMin: 4, repMax: 10, restSec: 120, incrementKg: 2.5,
+    en: ['Hang with straight arms, overhand grip.', 'Pull until the chin clears the bar.', 'Lower all the way under control.'],
+    el: ['Κρέμασε με τεντωμένα χέρια, πρηνή λαβή.', 'Τράβα μέχρι το πηγούνι να περάσει τη μπάρα.', 'Κατέβα μέχρι κάτω ελεγχόμενα.'] }),
+  d({ id: 'cable-row', name: 'Seated Cable Row', category: 'back', equipment: 'cable', primary: ['upperBack', 'lats'], secondary: ['biceps', 'rearDelts'], pattern: 'pullH', defaultSets: 3, repMin: 10, repMax: 12, restSec: 90, incrementKg: 5,
+    en: ['Sit tall, slight bend in the knees.', 'Pull the handle to your stomach, squeezing the shoulder blades.', 'Reach forward slowly without rounding the back.'],
+    el: ['Κάτσε όρθιος, γόνατα ελαφρά λυγισμένα.', 'Τράβα τη λαβή στην κοιλιά σφίγγοντας τις ωμοπλάτες.', 'Επέστρεψε αργά χωρίς να καμπουριάζει η πλάτη.'] }),
+  d({ id: 'barbell-row', name: 'Barbell Row', category: 'back', equipment: 'barbell', primary: ['upperBack', 'lats'], secondary: ['rearDelts', 'biceps', 'lowerBack'], pattern: 'pullH', defaultSets: 4, repMin: 6, repMax: 10, restSec: 120, incrementKg: 2.5,
+    en: ['Hinge forward to about 45°, back flat.', 'Row the bar to the lower ribs.', 'Lower with control without standing up.'],
+    el: ['Σκύψε στις περίπου 45° με ίσια πλάτη.', 'Τράβα τη μπάρα στα κάτω πλευρά.', 'Κατέβασε ελεγχόμενα χωρίς να σηκώνεσαι.'] }),
+  d({ id: 'db-row', name: 'One-arm Dumbbell Row', category: 'back', equipment: 'dumbbell', primary: ['lats', 'upperBack'], secondary: ['biceps'], pattern: 'pullH', defaultSets: 3, repMin: 8, repMax: 12, restSec: 75, incrementKg: 2,
+    en: ['One knee and hand on a bench, back flat.', 'Pull the dumbbell toward the hip.', 'Lower to a full stretch.'],
+    el: ['Ένα γόνατο και ένα χέρι στον πάγκο, ίσια πλάτη.', 'Τράβα τον αλτήρα προς το ισχίο.', 'Κατέβασε σε πλήρη διάταση.'] }),
+  d({ id: 'face-pull', name: 'Face Pull', category: 'back', equipment: 'cable', primary: ['rearDelts', 'upperBack'], secondary: ['traps'], pattern: 'pullH', defaultSets: 3, repMin: 12, repMax: 20, restSec: 60, incrementKg: 2.5,
+    en: ['Rope at face height, palms facing in.', 'Pull toward the forehead, elbows high and wide.', 'Return slowly.'],
+    el: ['Σχοινί στο ύψος του προσώπου, παλάμες προς τα μέσα.', 'Τράβα προς το μέτωπο με αγκώνες ψηλά και ανοιχτά.', 'Επέστρεψε αργά.'] }),
+  d({ id: 'back-extension', name: 'Back Extension', category: 'back', equipment: 'bodyweight', kind: 'bodyweight', primary: ['lowerBack', 'glutes'], secondary: ['hamstrings'], pattern: 'hinge', defaultSets: 3, repMin: 10, repMax: 15, restSec: 60, incrementKg: 2.5,
+    en: ['Hips on the pad, body straight.', 'Lower the torso by hinging at the hips.', 'Raise until the body is straight again — no over-arching.'],
+    el: ['Λεκάνη στο μαξιλάρι, σώμα ίσιο.', 'Κατέβασε τον κορμό λυγίζοντας από τη λεκάνη.', 'Σήκω μέχρι να ισιώσει το σώμα — χωρίς υπερέκταση.'] }),
+
+  // ---------- shoulders ----------
+  d({ id: 'ohp', name: 'Overhead Press', category: 'shoulders', equipment: 'barbell', primary: ['frontDelts'], secondary: ['triceps', 'sideDelts'], pattern: 'pushV', defaultSets: 4, repMin: 6, repMax: 10, restSec: 120, incrementKg: 2.5,
+    en: ['Bar at the collarbones, glutes and abs tight.', 'Press straight up, moving the head back slightly.', 'Lock out overhead, then lower to the chest.'],
+    el: ['Μπάρα στις κλείδες, γλουτοί και κοιλιακοί σφιγμένοι.', 'Σπρώξε κάθετα πάνω, μετακινώντας ελαφρά το κεφάλι πίσω.', 'Κλείδωσε πάνω από το κεφάλι και κατέβασε στο στήθος.'] }),
+  d({ id: 'db-shoulder-press', name: 'Dumbbell Shoulder Press', category: 'shoulders', equipment: 'dumbbell', primary: ['frontDelts'], secondary: ['triceps', 'sideDelts'], pattern: 'pushV', defaultSets: 3, repMin: 8, repMax: 12, restSec: 90, incrementKg: 2,
+    en: ['Sit upright, dumbbells at shoulder height.', 'Press up until the arms are almost straight.', 'Lower to ear level.'],
+    el: ['Κάτσε όρθιος, αλτήρες στο ύψος των ώμων.', 'Σπρώξε πάνω μέχρι τα χέρια σχεδόν να τεντώσουν.', 'Κατέβασε στο ύψος των αυτιών.'] }),
+  d({ id: 'lateral-raise', name: 'Lateral Raise', category: 'shoulders', equipment: 'dumbbell', primary: ['sideDelts'], secondary: ['traps'], pattern: 'raise', defaultSets: 3, repMin: 12, repMax: 15, restSec: 60, incrementKg: 1,
+    en: ['Slight bend in the elbows, dumbbells at your sides.', 'Raise out to the sides to shoulder height.', 'Lower slowly — no swinging.'],
+    el: ['Ελαφρά λυγισμένοι αγκώνες, αλτήρες στα πλάγια.', 'Σήκωσε πλάγια μέχρι το ύψος των ώμων.', 'Κατέβασε αργά — χωρίς φόρα.'] }),
+  d({ id: 'rear-delt-fly', name: 'Rear Delt Fly', category: 'shoulders', equipment: 'machine', primary: ['rearDelts'], secondary: ['upperBack'], pattern: 'fly', defaultSets: 3, repMin: 12, repMax: 15, restSec: 60, incrementKg: 2.5,
+    en: ['Chest against the pad, arms straight in front.', 'Open the arms out wide.', 'Return slowly.'],
+    el: ['Στήθος στο μαξιλάρι, χέρια τεντωμένα μπροστά.', 'Άνοιξε τα χέρια πλάγια.', 'Επέστρεψε αργά.'] }),
+  d({ id: 'shrug', name: 'Dumbbell Shrug', category: 'shoulders', equipment: 'dumbbell', primary: ['traps'], secondary: ['forearms'], pattern: 'calf', defaultSets: 3, repMin: 10, repMax: 15, restSec: 60, incrementKg: 2,
+    en: ['Stand tall, dumbbells at your sides.', 'Lift the shoulders straight up toward the ears.', 'Pause, then lower fully.'],
+    el: ['Όρθιος, αλτήρες στα πλάγια.', 'Σήκωσε τους ώμους κάθετα προς τα αυτιά.', 'Κράτα και κατέβασε πλήρως.'] }),
+
+  // ---------- arms ----------
+  d({ id: 'db-curl', name: 'Dumbbell Curl', category: 'arms', equipment: 'dumbbell', primary: ['biceps'], secondary: ['forearms'], pattern: 'curl', defaultSets: 3, repMin: 10, repMax: 15, restSec: 60, incrementKg: 1,
+    en: ['Elbows at your sides, palms forward.', 'Curl up without moving the elbows forward.', 'Lower slowly to straight arms.'],
+    el: ['Αγκώνες στα πλευρά, παλάμες μπροστά.', 'Λύγισε χωρίς να μετακινούνται οι αγκώνες μπροστά.', 'Κατέβασε αργά μέχρι να τεντωθούν τα χέρια.'] }),
+  d({ id: 'barbell-curl', name: 'Barbell Curl', category: 'arms', equipment: 'barbell', primary: ['biceps'], secondary: ['forearms'], pattern: 'curl', defaultSets: 3, repMin: 8, repMax: 12, restSec: 75, incrementKg: 2.5,
+    en: ['Shoulder-width underhand grip.', 'Curl the bar up with fixed elbows.', 'Lower under control.'],
+    el: ['Ύπτια λαβή στο πλάτος των ώμων.', 'Λύγισε τη μπάρα με σταθερούς αγκώνες.', 'Κατέβασε ελεγχόμενα.'] }),
+  d({ id: 'hammer-curl', name: 'Hammer Curl', category: 'arms', equipment: 'dumbbell', primary: ['biceps', 'forearms'], secondary: [], pattern: 'curl', defaultSets: 3, repMin: 10, repMax: 15, restSec: 60, incrementKg: 1,
+    en: ['Palms facing each other.', 'Curl up keeping the thumbs on top.', 'Lower slowly.'],
+    el: ['Παλάμες η μία απέναντι στην άλλη.', 'Λύγισε με τους αντίχειρες προς τα πάνω.', 'Κατέβασε αργά.'] }),
+  d({ id: 'triceps-pushdown', name: 'Cable Triceps Pushdown', category: 'arms', equipment: 'cable', primary: ['triceps'], secondary: [], pattern: 'extension', defaultSets: 3, repMin: 10, repMax: 15, restSec: 60, incrementKg: 2.5,
+    en: ['Elbows pinned to your sides.', 'Push down until the arms are straight.', 'Let the forearms rise slowly, elbows still.'],
+    el: ['Αγκώνες κολλημένοι στα πλευρά.', 'Σπρώξε κάτω μέχρι να τεντωθούν τα χέρια.', 'Άφησε τους πήχεις να ανέβουν αργά, αγκώνες ακίνητοι.'] }),
+  d({ id: 'overhead-extension', name: 'Overhead Triceps Extension', category: 'arms', equipment: 'dumbbell', primary: ['triceps'], secondary: [], pattern: 'extension', defaultSets: 3, repMin: 10, repMax: 15, restSec: 60, incrementKg: 2,
+    en: ['Hold one dumbbell overhead with both hands.', 'Lower it behind the head, elbows pointing up.', 'Extend back to straight arms.'],
+    el: ['Κράτα έναν αλτήρα πάνω από το κεφάλι με τα δύο χέρια.', 'Κατέβασέ τον πίσω από το κεφάλι, αγκώνες προς τα πάνω.', 'Τέντωσε ξανά τα χέρια.'] }),
+  d({ id: 'skullcrusher', name: 'EZ-bar Skull Crusher', category: 'arms', equipment: 'barbell', primary: ['triceps'], secondary: [], pattern: 'extension', defaultSets: 3, repMin: 8, repMax: 12, restSec: 75, incrementKg: 2.5,
+    en: ['Lie on a bench, bar above the shoulders.', 'Bend the elbows to lower the bar toward the forehead.', 'Extend back up, elbows stable.'],
+    el: ['Ξαπλωμένος, μπάρα πάνω από τους ώμους.', 'Λύγισε τους αγκώνες κατεβάζοντας τη μπάρα προς το μέτωπο.', 'Τέντωσε ξανά με σταθερούς αγκώνες.'] }),
+
+  // ---------- core ----------
+  d({ id: 'plank', name: 'Plank', category: 'core', equipment: 'bodyweight', kind: 'bodyweight', primary: ['abs'], secondary: ['obliques', 'glutes'], pattern: 'core', defaultSets: 3, repMin: 30, repMax: 60, restSec: 60, incrementKg: 0,
+    en: ['Forearms under the shoulders, body straight.', 'Squeeze glutes and abs; don’t let the hips sag.', 'Hold for time (log seconds as reps).'],
+    el: ['Πήχεις κάτω από τους ώμους, σώμα ίσιο.', 'Σφίξε γλουτούς και κοιλιακούς· μην πέφτει η λεκάνη.', 'Κράτα για χρόνο (κατέγραψε τα δευτερόλεπτα ως επαναλήψεις).'] }),
+  d({ id: 'cable-crunch', name: 'Cable Crunch', category: 'core', equipment: 'cable', primary: ['abs'], secondary: [], pattern: 'core', defaultSets: 3, repMin: 12, repMax: 15, restSec: 60, incrementKg: 2.5,
+    en: ['Kneel facing the cable, rope by your head.', 'Crunch down by flexing the spine, not the hips.', 'Return slowly.'],
+    el: ['Γονάτισε μπροστά στην τροχαλία, σχοινί δίπλα στο κεφάλι.', 'Κάμψε τη σπονδυλική στήλη, όχι τη λεκάνη.', 'Επέστρεψε αργά.'] }),
+  d({ id: 'leg-raise', name: 'Hanging Leg Raise', category: 'core', equipment: 'bodyweight', kind: 'bodyweight', primary: ['abs'], secondary: ['obliques'], pattern: 'core', defaultSets: 3, repMin: 8, repMax: 15, restSec: 60, incrementKg: 0,
+    en: ['Hang from a bar without swinging.', 'Raise the legs by curling the pelvis up.', 'Lower slowly.'],
+    el: ['Κρέμασε από μπάρα χωρίς ταλάντευση.', 'Σήκωσε τα πόδια «τυλίγοντας» τη λεκάνη προς τα πάνω.', 'Κατέβασε αργά.'] }),
+  d({ id: 'russian-twist', name: 'Russian Twist', category: 'core', equipment: 'bodyweight', kind: 'bodyweight', primary: ['obliques'], secondary: ['abs'], pattern: 'core', defaultSets: 3, repMin: 12, repMax: 20, restSec: 45, incrementKg: 0,
+    en: ['Sit leaning back slightly, feet on the floor or raised.', 'Rotate the torso side to side.', 'Keep the chest up throughout.'],
+    el: ['Κάτσε με ελαφριά κλίση πίσω, πόδια στο πάτωμα ή ψηλά.', 'Περίστρεψε τον κορμό δεξιά-αριστερά.', 'Κράτα το στήθος ψηλά.'] }),
+
+  // ---------- cardio ----------
+  d({ id: 'treadmill', name: 'Treadmill Walk / Run', category: 'cardio', equipment: 'cardioMachine', kind: 'cardio', primary: ['cardio'], secondary: [], pattern: 'cardio', defaultSets: 1, repMin: 20, repMax: 40, restSec: 0, incrementKg: 0,
+    en: ['Start with an easy warm-up pace.', 'Incline walking is joint-friendly and effective.', 'Log minutes and distance.'],
+    el: ['Ξεκίνα με εύκολο ρυθμό προθέρμανσης.', 'Το περπάτημα σε κλίση είναι φιλικό στις αρθρώσεις και αποτελεσματικό.', 'Κατέγραψε λεπτά και απόσταση.'] }),
+  d({ id: 'bike', name: 'Stationary Bike', category: 'cardio', equipment: 'cardioMachine', kind: 'cardio', primary: ['cardio'], secondary: [], pattern: 'cardio', defaultSets: 1, repMin: 20, repMax: 40, restSec: 0, incrementKg: 0,
+    en: ['Seat at hip height, slight knee bend at the bottom.', 'Keep a steady cadence.', 'Log minutes and distance.'],
+    el: ['Σέλα στο ύψος της λεκάνης, ελαφριά κάμψη του γονάτου κάτω.', 'Κράτα σταθερό ρυθμό.', 'Κατέγραψε λεπτά και απόσταση.'] }),
+  d({ id: 'elliptical', name: 'Elliptical', category: 'cardio', equipment: 'cardioMachine', kind: 'cardio', primary: ['cardio'], secondary: [], pattern: 'cardio', defaultSets: 1, repMin: 20, repMax: 40, restSec: 0, incrementKg: 0,
+    en: ['Stand tall, light grip on the handles.', 'Push and pull evenly.', 'Log minutes and distance.'],
+    el: ['Όρθιος, ελαφρύ κράτημα στις λαβές.', 'Σπρώξε και τράβα ομοιόμορφα.', 'Κατέγραψε λεπτά και απόσταση.'] }),
+  d({ id: 'rower', name: 'Rowing Machine', category: 'cardio', equipment: 'cardioMachine', kind: 'cardio', primary: ['cardio', 'fullBody'], secondary: [], pattern: 'cardio', defaultSets: 1, repMin: 10, repMax: 30, restSec: 0, incrementKg: 0,
+    en: ['Legs, then hips, then arms on the drive.', 'Reverse the order on the way back.', 'Log minutes and distance.'],
+    el: ['Πόδια, μετά λεκάνη, μετά χέρια στην έλξη.', 'Αντίστροφη σειρά στην επιστροφή.', 'Κατέγραψε λεπτά και απόσταση.'] })
+];
+
+export const LIBRARY_BY_ID = new Map(EXERCISE_LIBRARY.map((e) => [e.id, e]));

@@ -35,10 +35,14 @@ const recState = z.object({ id, status: z.enum(['dismissed', 'completed']) }).pa
 const review = z.object({ id, review: z.object({}).passthrough() }).passthrough();
 const profile = z.object({ id: z.literal('profile'), heightCm: num, startWeightKg: num, proteinTargetG: num }).passthrough();
 const settings = z.object({ id: z.literal('settings'), language: z.enum(['el', 'en']) }).passthrough();
+const customExercise = z.object({ id, name: z.string().min(1), category: z.string(), kind: z.enum(['resistance', 'bodyweight', 'cardio']), repMin: num, repMax: num }).passthrough();
+const program = z.object({ id, name: z.string(), active: z.boolean(), days: z.array(z.string().nullable()).length(7) }).passthrough();
+const mealPlanEntry = z.object({ id, weekday: z.number().int().min(0).max(6), category: z.enum(MEAL_CATEGORIES as [string, ...string[]]), savedMealId: z.string() }).passthrough();
 
 const TABLE_SCHEMAS: Record<TableName, z.ZodTypeAny> = {
   profile, settings, weights: weight, meals: meal, foods: food, savedMeals: savedMeal, water, dailyMetrics: dailyMetric,
-  workouts: workout, templates: template, health, schedules: schedule, recommendationStates: recState, weeklyReviews: review
+  workouts: workout, templates: template, health, schedules: schedule, recommendationStates: recState, weeklyReviews: review,
+  exercises: customExercise, programs: program, mealPlan: mealPlanEntry
 };
 
 export interface TableValidation { table: TableName; valid: number; invalid: { index: number; error: string }[] }

@@ -15,6 +15,13 @@ import { workoutsInWeek } from '../../analytics/workouts';
 import { currentStreak, workoutWeekStreak } from '../../analytics/adherence';
 import { addWater, setSteps } from '../../db/repositories';
 import { nowLocal } from '../../utils/date';
+import { TodayCard } from './TodayCard';
+
+/** Time-of-day greeting (from GymApp's home screen). */
+function greetingKey(): 'dash.goodMorning' | 'dash.goodAfternoon' | 'dash.goodEvening' {
+  const h = new Date().getHours();
+  return h < 12 ? 'dash.goodMorning' : h < 18 ? 'dash.goodAfternoon' : 'dash.goodEvening';
+}
 
 export function Dashboard() {
   const i = useI18n();
@@ -78,7 +85,8 @@ export function Dashboard() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title={t('dash.title')} subtitle={i.date(d0, { weekday: 'long', day: 'numeric', month: 'long' })} />
+      <PageHeader title={t('dash.title')} subtitle={`${t(greetingKey())} · ${i.date(d0, { weekday: 'long', day: 'numeric', month: 'long' })}`} />
+      <TodayCard />
       {quickButtons}
 
       {profile.unconfirmed.length > 0 && (

@@ -41,6 +41,15 @@ export const SCHEMA_VERSIONS: SchemaVersion[] = [
         if (p.fiberTargetG === undefined) p.fiberTargetG = 30;
       });
     }
+  },
+  {
+    // v3 (GymApp merge): custom exercises, weekly training programs, meal plan.
+    version: 3,
+    stores: {
+      exercises: 'id, name, category',
+      programs: 'id, active',
+      mealPlan: 'id, weekday'
+    }
   }
 ];
 

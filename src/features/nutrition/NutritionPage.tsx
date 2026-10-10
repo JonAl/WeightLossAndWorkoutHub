@@ -12,6 +12,7 @@ import { averageNutrient, calorieAdherence, calorieEstimate, dailyNutrition, pro
 import { addMeal, addSavedMeal, addWater, deleteFood, deleteMeal, deleteSavedMeal, deleteWater, logSavedMeal, updateFood } from '../../db/repositories';
 import { MEAL_CATEGORIES, type CustomFood, type MealCategory, type MealEntry } from '../../types';
 import { FoodForm } from './FoodForm';
+import { MealPlanTab } from './MealPlanTab';
 import { latestEntry } from '../../analytics/weight';
 import { useWeights } from '../../hooks/useData';
 import { ageFromBirthDate } from '../../utils/date';
@@ -19,12 +20,13 @@ import { ageFromBirthDate } from '../../utils/date';
 export function NutritionPage() {
   const i = useI18n();
   const { t, td } = i;
-  const [tab, setTab] = useState<'log' | 'foods' | 'insights'>('log');
+  const [tab, setTab] = useState<'log' | 'plan' | 'foods' | 'insights'>('log');
   return (
     <div className="space-y-4">
       <PageHeader title={t('nav.nutrition')} />
-      <Segmented label={t('nutrition.tabs')} value={tab} onChange={setTab} options={[{ value: 'log', label: t('nutrition.tabLog') }, { value: 'foods', label: t('nutrition.tabFoods') }, { value: 'insights', label: t('nutrition.tabInsights') }]} />
+      <Segmented label={t('nutrition.tabs')} value={tab} onChange={setTab} options={[{ value: 'log', label: t('nutrition.tabLog') }, { value: 'plan', label: t('nutrition.tabPlan') }, { value: 'foods', label: t('nutrition.tabFoods') }, { value: 'insights', label: t('nutrition.tabInsights') }]} />
       {tab === 'log' && <DayLog />}
+      {tab === 'plan' && <MealPlanTab />}
       {tab === 'foods' && <FoodsTab />}
       {tab === 'insights' && <NutritionInsights />}
       <span className="sr-only">{td('nav.nutrition')}</span>

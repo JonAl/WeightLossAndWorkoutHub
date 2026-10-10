@@ -8,6 +8,7 @@ import { AppContext } from './AppContext';
 import { I18nProvider, createI18n } from '../i18n';
 import { FeedbackProvider } from '../components/feedback';
 import { QuickAddProvider } from './QuickAdd';
+import { RestTimerProvider } from './RestTimer';
 import { DarkContext } from './ThemeContext';
 import { useApplyTheme } from '../hooks/useTheme';
 import { Layout } from './Layout';
@@ -89,6 +90,7 @@ function ReadyApp() {
           <FeedbackProvider>
             {!profile.onboardingComplete ? <Onboarding /> : (
               <QuickAddProvider>
+               <RestTimerProvider>
                 <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || '/'}>
                   <Routes>
                     <Route element={<Layout />}>
@@ -105,6 +107,7 @@ function ReadyApp() {
                     </Route>
                   </Routes>
                 </BrowserRouter>
+               </RestTimerProvider>
               </QuickAddProvider>
             )}
           </FeedbackProvider>
