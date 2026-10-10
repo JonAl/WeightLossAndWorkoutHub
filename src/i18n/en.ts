@@ -357,7 +357,7 @@ export const en = {
   'trs.title': 'Training', 'trs.sub': 'Rest timer, bar and plates', 'trs.autoRest': 'Start rest timer automatically', 'trs.autoRestHint': 'After every completed set',
   'trs.sound': 'Sound when rest is over', 'trs.vibrate': 'Vibrate when rest is over', 'trs.defaultRest': 'Default rest (s)', 'trs.bar': 'Bar weight', 'trs.plates': 'Available plates', 'trs.platesHint': 'Comma-separated',
   'trs.bgNote': 'Alerts work while the app is open. Web apps cannot reliably alert in the background when the screen is off.',
-  'table.exercises': 'Custom exercises', 'table.programs': 'Training plans', 'table.mealPlan': 'Meal plan'
+  'table.exercises': 'Custom exercises', 'table.programs': 'Training plans', 'table.mealPlan': 'Meal plan',
 
   // Smart workout reminders
   'reminder.title': 'Your workout goal',
