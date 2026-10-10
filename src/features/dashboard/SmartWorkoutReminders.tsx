@@ -54,7 +54,6 @@ export function SmartWorkoutReminders() {
         icon: `${import.meta.env.BASE_URL}icons/icon-192.png`,
         badge: `${import.meta.env.BASE_URL}icons/icon-192.png`,
         tag: `wlh-workout-reminder-${day}`,
-        renotify: false
       });
       if (cancelled) return;
       const next = { ...preferences, lastNotifiedDate: day };
