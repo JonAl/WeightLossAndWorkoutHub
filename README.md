@@ -86,14 +86,14 @@ GymApp 0.2.0 (Android prototype with fixed sample data) has been merged into thi
 | Weekly meal plan + shopping list | **Meal plan** from your saved meals per weekday, planned protein/kcal, "log today's plan", and a real **shopping list** (summed, tick-off, copy) |
 | — (selected extras) | **Weekly training plan + calendar**, **progression helpers** ("last time…", double-progression suggestion, pre-filled sets), **plate calculator** and **warm-up sets**, training settings (rest, bar, plates) |
 
-Existing data is kept: IndexedDB schema v3 only *adds* tables (`exercises`, `programs`, `mealPlan`); old JSON backups import unchanged. Background alerts with the screen off are not possible for a web app — see *Known limitations*.
+Existing data is kept: IndexedDB schema v3 only *adds* tables (`exercises`, `programs`, `mealPlan`); old JSON backups import unchanged. Smart workout reminder preferences are stored locally and do not change the database or backup format. Reliable scheduled push alerts with the app closed need a push service/backend — see *Known limitations*.
 
 ## Features
 
 | Area | What is implemented |
 |---|---|
 | **Onboarding & profile** | 4-step wizard (language/units → basics → weights → targets). The values from the brief (37 y, 182 cm, 155 kg start, ~145 kg current, 5+ sessions/week, 3 meals, whey isolate) are prefilled but marked **unconfirmed** until you confirm or edit them. Full editable profile: DOB/age, sex (only for the calorie equation), height, start weight/date, goal weight, target date, experience, schedule, activity, diet notes, supplements, units (kg/cm or lb/in). |
-| **Dashboard** | Current/start/goal weight, total lost (kg and %), remaining, 28-day regression rate, BMI (labelled as a screening measure), waist change, streaks, today's protein/calorie/water/steps against targets, workouts this week, 7/30-day trend chart, quick-add for weight, meal, workout and health, daily and weekly summaries, and an empty state for onboarding. |
+| **Dashboard** | Smart workout reminder card with remaining weekly sessions and optional adaptive morning browser notifications (while the app is open). Current/start/goal weight, total lost (kg and %), remaining, 28-day regression rate, BMI (labelled as a screening measure), waist change, streaks, today's protein/calorie/water/steps against targets, workouts this week, 7/30-day trend chart, quick-add for weight, meal, workout and health, daily and weekly summaries, and an empty state for onboarding. |
 | **Weight & body** | Add/edit/delete entries with date-time, weight, waist/hip/chest/arm/thigh/neck and body-fat %. A duplicate warning appears for the same weight within 10 minutes, and you can still save it. Range filter (7/30/90/365/all), daily records and weekly averages, 7/30/90/365-day comparisons (absolute and %), measurement charts, CSV export. |
 | **Nutrition** | Meals with date-time, category, food, quantity and unit, calories/protein/carbs/fat/fiber and notes. Blank fields mean *unknown*, not zero. Custom foods with an explicit reference amount, and nutrients are scaled automatically (e.g. 50 g whey from a "per 25 g" food). Conversions that can't be done reliably are refused with a warning. You can save a meal group as a favourite, log saved meals in one tap, re-log a previous entry, track water, see day totals and remaining targets, view 7-day tables, and get answers to the nutrition questions in the brief. |
 | **Targets & estimates** | Independent protein and calorie targets. Protein estimate: 1.6–2.2 g/kg of a **reference weight** (goal weight, or BMI-25 weight), not total body weight. Calorie estimate: Mifflin–St Jeor × activity factor, with a deficit of at most 500 kcal or 20 %, and never below 1500/1200 kcal. Everything is labelled as an estimate. |
@@ -166,7 +166,8 @@ Unit tests cover weight trends, rates, period changes, BMI, measurements, protei
 
 ## Known limitations
 
-- Rest-timer sound/vibration only fire while the app is open (no background notifications on GitHub Pages / PWA).
+- Rest-timer sound/vibration only fire while the app is open.
+- Smart workout reminders are shown on the dashboard and can optionally use browser notifications during the 07:00–11:00 local morning window while the app is open. Cadence adapts to remaining workouts (daily with 3+ remaining, every other day with 1–2) and stops when the weekly target is reached. Reliable push notifications while the app is fully closed require a push service/backend and are not included in this static GitHub Pages build.
 - Exercise illustrations are simplified animated stick figures per movement type, not per-exercise videos.
 
 - No built-in food database. Nutrition values come only from your entries or labels (by design, so no unverified values are shown).
