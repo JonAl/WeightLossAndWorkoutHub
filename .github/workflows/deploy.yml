@@ -20,24 +20,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
+      # Asks GitHub where this site is actually served (e.g. "/WeightLossHub.github.io").
+      - id: pages
+        uses: actions/configure-pages@v5
       - run: npm ci
       - run: npm test
       - name: Build
         run: |
-          REPO="${{ github.event.repository.name }}"
-          # user/organisation sites (<name>.github.io) live at the root, project sites under /<repo>/
-          if [[ "$REPO" == *.github.io ]]; then export BASE_PATH="/"; else export BASE_PATH="/$REPO/"; fi
+          # Use the real Pages path reported by GitHub; "" means the site is at the domain root.
+          export BASE_PATH="${{ steps.pages.outputs.base_path }}/"
           echo "Building with BASE_PATH=$BASE_PATH"
           npm run build
           # SPA fallback: GitHub Pages serves 404.html for unknown paths (e.g. /repo/progress)
           cp dist/index.html dist/404.html
           touch dist/.nojekyll
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: dist
 
