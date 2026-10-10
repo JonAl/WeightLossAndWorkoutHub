@@ -2,8 +2,6 @@
 
 A private, offline-first Progressive Web App for tracking weight, body measurements, nutrition, workouts and health logs. It also gives transparent, rule-based coaching. Everything is stored **on your device** (IndexedDB). There is no account, no backend, no analytics and no third-party data transfer.
 
-This is an Claude created Web App.
-
 Greek is the default language, and English is fully supported.
 
 ---
@@ -76,6 +74,20 @@ Your data lives **only in this browser on this device**. You can lose it if you 
 
 ---
 
+## What's new in 1.1 — GymApp merged in
+
+GymApp 0.2.0 (Android prototype with fixed sample data) has been merged into this app as working, saved features:
+
+| From GymApp | Now in Weight Loss Hub |
+|---|---|
+| Home "Today's workout" | **Today's workout** card on the dashboard, driven by the weekly plan (start / resume / rest day / next session) |
+| Exercise library + detail | **44 exercises** (GR/EN cues, muscles, equipment, sets × rep range, rest), category chips, search by name or muscle, **animated SVG figures**, your last session & PR, add to the current workout or a template, **custom exercises** |
+| Live workout (Set X of Y, big steppers, rest countdown) | **Focus mode** in the logger + an app-wide **rest timer** that starts after each set (±15 s, skip, sound, vibration; survives page changes) |
+| Weekly meal plan + shopping list | **Meal plan** from your saved meals per weekday, planned protein/kcal, "log today's plan", and a real **shopping list** (summed, tick-off, copy) |
+| — (selected extras) | **Weekly training plan + calendar**, **progression helpers** ("last time…", double-progression suggestion, pre-filled sets), **plate calculator** and **warm-up sets**, training settings (rest, bar, plates) |
+
+Existing data is kept: IndexedDB schema v3 only *adds* tables (`exercises`, `programs`, `mealPlan`); old JSON backups import unchanged. Background alerts with the screen off are not possible for a web app — see *Known limitations*.
+
 ## Features
 
 | Area | What is implemented |
@@ -132,7 +144,7 @@ Business logic (`analytics/`, `coaching/`, `db/backup.ts`) is pure TypeScript wi
 |---|---|
 | `npm run typecheck` | ✅ 0 errors |
 | `npm run lint` | ✅ 0 problems |
-| `npm test` | ✅ 8 files, **53 tests passed** |
+| `npm test` | ✅ 9 files, **74 tests passed** |
 | `npm run build` | ✅ built; PWA precache of 18 entries; no chunk warnings |
 
 Unit tests cover weight trends, rates, period changes, BMI, measurements, protein and calorie adherence (missing ≠ zero), protein/calorie estimates, serving conversions, volume, weekly workout counts, PRs/e1RM, streaks, coverage, projections, correlations, backup validation, import preview/modes, the IndexedDB round trip, duplicate detection, coaching rules (max 3, dismiss, disabled categories, no medication rules), the weekly review, and i18n completeness and formatting. One UI test drives onboarding → dashboard → add weight → validation → remount persistence → English.
@@ -153,6 +165,9 @@ Unit tests cover weight trends, rates, period changes, BMI, measurements, protei
 ---
 
 ## Known limitations
+
+- Rest-timer sound/vibration only fire while the app is open (no background notifications on GitHub Pages / PWA).
+- Exercise illustrations are simplified animated stick figures per movement type, not per-exercise videos.
 
 - No built-in food database. Nutrition values come only from your entries or labels (by design, so no unverified values are shown).
 - Data is per browser and per device. Moving data between devices is manual (JSON export/import). There is no sync.
