@@ -1,4 +1,4 @@
-# Weight Loss Hub
+# Weight Loss and Workout Hub (created with Claude)
 
 A private, offline-first Progressive Web App for tracking weight, body measurements, nutrition, workouts and health logs. It also gives transparent, rule-based coaching. Everything is stored **on your device** (IndexedDB). There is no account, no backend, no analytics and no third-party data transfer.
 
