@@ -74,7 +74,7 @@ Your data lives **only in this browser on this device**. You can lose it if you 
 
 ---
 
-## What's new in 1.1 — GymApp merged in
+## What's new in 1.1 — GymApp (another app made by me for local use) merged in
 
 GymApp 0.2.0 (Android prototype with fixed sample data) has been merged into this app as working, saved features:
 
